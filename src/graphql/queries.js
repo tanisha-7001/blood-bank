@@ -1,15 +1,34 @@
 /* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
-export const getAvailableBlood = /* GraphQL */ `
-  query GetAvailableBlood($bloodType: String!) {
-    getAvailableBlood(bloodType: $bloodType) {
+export const getBloodDonor = /* GraphQL */ `
+  query GetBloodDonor($id: ID!) {
+    getBloodDonor(id: $id) {
       id
       name
       bloodType
-      contactNumber
-      location
-      units
+      createdAt
+      updatedAt
+      __typename
+    }
+  }
+`;
+export const listBloodDonors = /* GraphQL */ `
+  query ListBloodDonors(
+    $filter: ModelBloodDonorFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    listBloodDonors(filter: $filter, limit: $limit, nextToken: $nextToken) {
+      items {
+        id
+        name
+        bloodType
+        createdAt
+        updatedAt
+        __typename
+      }
+      nextToken
       __typename
     }
   }

@@ -1,25 +1,47 @@
 /* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
-export const addBloodDonor = /* GraphQL */ `
-  mutation AddBloodDonor(
-    $name: String!
-    $bloodType: String!
-    $contactNumber: String!
-    $location: String!
+export const createBloodDonor = /* GraphQL */ `
+  mutation CreateBloodDonor(
+    $input: CreateBloodDonorInput!
+    $condition: ModelBloodDonorConditionInput
   ) {
-    addBloodDonor(
-      name: $name
-      bloodType: $bloodType
-      contactNumber: $contactNumber
-      location: $location
-    ) {
+    createBloodDonor(input: $input, condition: $condition) {
       id
       name
       bloodType
-      contactNumber
-      location
-      units
+      createdAt
+      updatedAt
+      __typename
+    }
+  }
+`;
+export const updateBloodDonor = /* GraphQL */ `
+  mutation UpdateBloodDonor(
+    $input: UpdateBloodDonorInput!
+    $condition: ModelBloodDonorConditionInput
+  ) {
+    updateBloodDonor(input: $input, condition: $condition) {
+      id
+      name
+      bloodType
+      createdAt
+      updatedAt
+      __typename
+    }
+  }
+`;
+export const deleteBloodDonor = /* GraphQL */ `
+  mutation DeleteBloodDonor(
+    $input: DeleteBloodDonorInput!
+    $condition: ModelBloodDonorConditionInput
+  ) {
+    deleteBloodDonor(input: $input, condition: $condition) {
+      id
+      name
+      bloodType
+      createdAt
+      updatedAt
       __typename
     }
   }

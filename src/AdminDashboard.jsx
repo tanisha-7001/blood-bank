@@ -1,15 +1,9 @@
 import { useEffect, useState } from 'react';
 import { generateClient } from 'aws-amplify/api';
-import { addBloodDonor } from './graphql/mutations';
-import { getAvailableBlood } from './graphql/queries';
+import { createBloodDonor } from './graphql/mutations';
+import { listBloodDonors } from './graphql/queries';
 
-const initialState = {
-  name: '',
-  bloodType: '',
-  contactNumber: '',
-  location: '',
-};
-
+const initialState = { name: '', bloodType: '' };
 const client = generateClient();
 
 const AdminDashboard = () => {
@@ -26,118 +20,90 @@ const AdminDashboard = () => {
 
   async function fetchBloodDonors() {
     try {
-      const bloodData = await client.graphql({
-        query: getAvailableBlood,
-      });
-      const bloodDonors = bloodData.data.getAvailableBlood;
-      setBloodDonors(bloodDonors);
+      const bloodDonorData = await client.graphql({
+        query: listBloodDonors
+      });  
+      const donors = bloodDonorData.data.listBloodDonors.items || [];
+  
+      setBloodDonors(donors);
     } catch (err) {
       console.error('Error fetching blood donors:', err);
     }
   }
+  
 
-  async function addBloodDonor() {
+  async function addBloodDonorToDB() {
     try {
-      if (!formState.name || !formState.bloodType || !formState.contactNumber || !formState.location) {
-        return;
-      }
-      const newBloodDonor = { ...formState };
-      setBloodDonors([...bloodDonors, newBloodDonor]);
+      if (!formState.name || !formState.bloodType) return;
+      const donor = { ...formState };
+      setBloodDonors([...bloodDonors, donor]);
       setFormState(initialState);
-
       await client.graphql({
-        query: addBloodDonor,
+        query: createBloodDonor,
         variables: {
-          input: newBloodDonor,
-        },
+          input: donor
+        }
       });
-
-      fetchBloodDonors();
     } catch (err) {
-      console.error('Error adding blood donor:', err);
+      console.log('Error adding blood donor:', err);
     }
   }
 
   return (
     <div style={styles.container}>
-      <div style={styles.column}>
-        <h2>Blood Donor Management</h2>
-        <input
-          onChange={(event) => setInput('name', event.target.value)}
-          style={styles.input}
-          value={formState.name}
-          placeholder="Name"
-        />
-        <input
-          onChange={(event) => setInput('bloodType', event.target.value)}
-          style={styles.input}
-          value={formState.bloodType}
-          placeholder="Blood Type"
-        />
-        <input
-          onChange={(event) => setInput('contactNumber', event.target.value)}
-          style={styles.input}
-          value={formState.contactNumber}
-          placeholder="Contact Number"
-        />
-        <input
-          onChange={(event) => setInput('location', event.target.value)}
-          style={styles.input}
-          value={formState.location}
-          placeholder="Location"
-        />
-        <button style={styles.button} onClick={addBloodDonor}>
-          Add Blood Donor
-        </button>
-      </div>
-
-      <div style={styles.column}>
-        <h2>Available Blood</h2>
-        <ul>
-          {bloodDonors.map((donor) => (
-            <div key={donor.id} style={styles.bloodDonor}>
-              <p style={styles.donorInfo}>
-                {donor.bloodType}  available
-              </p>
-            </div>
-          ))}
-        </ul>
-      </div>
+      <h2>Blood Donor Management</h2>
+      <input
+        onChange={(event) => setInput('name', event.target.value)}
+        style={styles.input}
+        value={formState.name}
+        placeholder="Name"
+      />
+      <input
+        onChange={(event) => setInput('bloodType', event.target.value)}
+        style={styles.input}
+        value={formState.bloodType}
+        placeholder="Blood Type"
+      />
+      <button style={styles.button} onClick={addBloodDonorToDB}>
+        Add Blood Donor
+      </button>
+      <h3>Blood Donors</h3>
+      {bloodDonors.map((donor, index) => (
+        <div key={donor.id ? donor.id : index} style={styles.donor}>
+          <p style={styles.donorInfo}>{`Name: ${donor.name}, Blood Type: ${donor.bloodType}`}</p>
+        </div>
+      ))}
     </div>
   );
 };
 
 const styles = {
   container: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    maxWidth: 800,
+    width: 400,
     margin: '0 auto',
-    padding: 20,
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    padding: 20
   },
-  column: {
-    flex: 1,
-    marginLeft: 20,
-  },
-  bloodDonor: { marginBottom: 15 },
+  donor: { marginBottom: 15 },
   input: {
     border: 'none',
     backgroundColor: '#ddd',
     marginBottom: 10,
     padding: 8,
-    fontSize: 18,
-    width: '100%',
+    fontSize: 18
   },
-  donorInfo: { fontSize: 18, fontWeight: 'bold', marginBottom: 0 },
+  donorInfo: { fontSize: 16 },
   button: {
     backgroundColor: 'black',
     color: 'white',
     outline: 'none',
     fontSize: 18,
     padding: '12px 0px',
+    marginBottom: 10,
     cursor: 'pointer',
-    width: '100%',
-  },
+  }
 };
 
 export default AdminDashboard;
