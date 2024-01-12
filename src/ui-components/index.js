@@ -6,4 +6,6 @@
 
 export { default as BloodDonorCreateForm } from "./BloodDonorCreateForm";
 export { default as BloodDonorUpdateForm } from "./BloodDonorUpdateForm";
+export { default as DonorRequestCreateForm } from "./DonorRequestCreateForm";
+export { default as DonorRequestUpdateForm } from "./DonorRequestUpdateForm";
 export { default as studioTheme } from "./studioTheme";

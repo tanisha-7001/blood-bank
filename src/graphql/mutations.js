@@ -46,3 +46,60 @@ export const deleteBloodDonor = /* GraphQL */ `
     }
   }
 `;
+export const createDonorRequest = /* GraphQL */ `
+  mutation CreateDonorRequest(
+    $input: CreateDonorRequestInput!
+    $condition: ModelDonorRequestConditionInput
+  ) {
+    createDonorRequest(input: $input, condition: $condition) {
+      phone
+      name
+      id
+      age
+      fever
+      bloodType
+      adminApproval
+      createdAt
+      updatedAt
+      __typename
+    }
+  }
+`;
+export const updateDonorRequest = /* GraphQL */ `
+  mutation UpdateDonorRequest(
+    $input: UpdateDonorRequestInput!
+    $condition: ModelDonorRequestConditionInput
+  ) {
+    updateDonorRequest(input: $input, condition: $condition) {
+      phone
+      name
+      id
+      age
+      fever
+      bloodType
+      adminApproval
+      createdAt
+      updatedAt
+      __typename
+    }
+  }
+`;
+export const deleteDonorRequest = /* GraphQL */ `
+  mutation DeleteDonorRequest(
+    $input: DeleteDonorRequestInput!
+    $condition: ModelDonorRequestConditionInput
+  ) {
+    deleteDonorRequest(input: $input, condition: $condition) {
+      phone
+      name
+      id
+      age
+      fever
+      bloodType
+      adminApproval
+      createdAt
+      updatedAt
+      __typename
+    }
+  }
+`;

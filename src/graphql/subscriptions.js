@@ -43,3 +43,57 @@ export const onDeleteBloodDonor = /* GraphQL */ `
     }
   }
 `;
+export const onCreateDonorRequest = /* GraphQL */ `
+  subscription OnCreateDonorRequest(
+    $filter: ModelSubscriptionDonorRequestFilterInput
+  ) {
+    onCreateDonorRequest(filter: $filter) {
+      phone
+      name
+      id
+      age
+      fever
+      bloodType
+      adminApproval
+      createdAt
+      updatedAt
+      __typename
+    }
+  }
+`;
+export const onUpdateDonorRequest = /* GraphQL */ `
+  subscription OnUpdateDonorRequest(
+    $filter: ModelSubscriptionDonorRequestFilterInput
+  ) {
+    onUpdateDonorRequest(filter: $filter) {
+      phone
+      name
+      id
+      age
+      fever
+      bloodType
+      adminApproval
+      createdAt
+      updatedAt
+      __typename
+    }
+  }
+`;
+export const onDeleteDonorRequest = /* GraphQL */ `
+  subscription OnDeleteDonorRequest(
+    $filter: ModelSubscriptionDonorRequestFilterInput
+  ) {
+    onDeleteDonorRequest(filter: $filter) {
+      phone
+      name
+      id
+      age
+      fever
+      bloodType
+      adminApproval
+      createdAt
+      updatedAt
+      __typename
+    }
+  }
+`;

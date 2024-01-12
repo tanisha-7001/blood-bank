@@ -1,109 +1,114 @@
 import { useEffect, useState } from 'react';
 import { generateClient } from 'aws-amplify/api';
-import { createBloodDonor } from './graphql/mutations';
-import { listBloodDonors } from './graphql/queries';
+import { createBloodDonor, deleteBloodDonor } from './graphql/mutations';
+import { listBloodDonors, listDonorRequests } from './graphql/queries';
+import './AdminDashboard.css';
 
-const initialState = { name: '', bloodType: '' };
-const client = generateClient();
+const initial={name: '',bloodType: ''};
+const client= generateClient();
 
-const AdminDashboard = () => {
-  const [formState, setFormState] = useState(initialState);
-  const [bloodDonors, setBloodDonors] = useState([]);
+const AdminDashboard =()=>
+{
+  const [formState, setFormState] = useState(initial);
+  const [bloodDonor, setbloodDonor] = useState([]);
+  const [donorRequest, setdonorRequest] = useState([]);
 
-  useEffect(() => {
+  useEffect(() => 
+  { 
     fetchBloodDonors();
-  }, []);
+    fetchDonorRequests();
+  },[]);
 
-  function setInput(key, value) {
+  function setInput(key, value) 
+  {
     setFormState({ ...formState, [key]: value });
   }
 
-  async function fetchBloodDonors() {
-    try {
-      const bloodDonorData = await client.graphql({
-        query: listBloodDonors
-      });  
-      const donors = bloodDonorData.data.listBloodDonors.items || [];
-  
-      setBloodDonors(donors);
-    } catch (err) {
-      console.error('Error fetching blood donors:', err);
-    }
-  }
-  
-
-  async function addBloodDonorToDB() {
-    try {
-      if (!formState.name || !formState.bloodType) return;
-      const donor = { ...formState };
-      setBloodDonors([...bloodDonors, donor]);
-      setFormState(initialState);
-      await client.graphql({
-        query: createBloodDonor,
-        variables: {
-          input: donor
-        }
-      });
-    } catch (err) {
-      console.log('Error adding blood donor:', err);
-    }
+  async function fetchBloodDonors() 
+  {
+    const donatedData = await client.graphql({query: listBloodDonors});
+    const donors = donatedData.data.listBloodDonors.items;
+    setbloodDonor(donors);
   }
 
-  return (
-    <div style={styles.container}>
-      <h2>Blood Donor Management</h2>
-      <input
-        onChange={(event) => setInput('name', event.target.value)}
-        style={styles.input}
-        value={formState.name}
-        placeholder="Name"
-      />
-      <input
-        onChange={(event) => setInput('bloodType', event.target.value)}
-        style={styles.input}
-        value={formState.bloodType}
-        placeholder="Blood Type"
-      />
-      <button style={styles.button} onClick={addBloodDonorToDB}>
-        Add Blood Donor
-      </button>
-      <h3>Blood Donors</h3>
-      {bloodDonors.map((donor, index) => (
-        <div key={donor.id ? donor.id : index} style={styles.donor}>
-          <p style={styles.donorInfo}>{`Name: ${donor.name}, Blood Type: ${donor.bloodType}`}</p>
-        </div>
-      ))}
-    </div>
-  );
-};
-
-const styles = {
-  container: {
-    width: 400,
-    margin: '0 auto',
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'center',
-    padding: 20
-  },
-  donor: { marginBottom: 15 },
-  input: {
-    border: 'none',
-    backgroundColor: '#ddd',
-    marginBottom: 10,
-    padding: 8,
-    fontSize: 18
-  },
-  donorInfo: { fontSize: 16 },
-  button: {
-    backgroundColor: 'black',
-    color: 'white',
-    outline: 'none',
-    fontSize: 18,
-    padding: '12px 0px',
-    marginBottom: 10,
-    cursor: 'pointer',
+  async function fetchDonorRequests() 
+  {
+    const potentialDonor = await client.graphql({query: listDonorRequests});
+    const requests = potentialDonor.data.listDonorRequests.items;
+    setdonorRequest(requests);
   }
-};
 
+  async function addToDB() 
+  {
+    if (!formState.name || !formState.bloodType) 
+    return;
+    const donor = { ...formState };
+    setbloodDonor([...bloodDonor, donor]);
+    setFormState(initial);
+    await client.graphql({query: createBloodDonor,variables: {input: donor}});
+  }
+
+  async function deleteFromDB(id) 
+  {
+    await client.graphql({query: deleteBloodDonor,variables: {input: { id }}});
+    const updatedDonors = bloodDonor.filter((donor) => donor.id !== id);
+    setbloodDonor(updatedDonors);
+  }
+
+  return(
+    <>
+    <div className="container">
+      <div className="column">
+        <h2>Add Blood Donor</h2>
+        <label>Name</label>
+        <input onChange={(event) => setInput('name', event.target.value)} value={formState.name}/>
+        <label>Blood Type</label>
+        <input onChange={(event) => setInput('bloodType', event.target.value)} value={formState.bloodType}/>
+        <button className="button" onClick={addToDB}> Add Blood Donor</button>
+      </div>
+
+      <div className="column">
+        <h2>Delete Blood Donor</h2>
+        {bloodDonor.map((donor) => (
+          <div className="donorInfo">
+            <p >{`Name: ${donor.name}, Blood Type: ${donor.bloodType}`}</p>
+            <button className="deleteButton" onClick={() => deleteFromDB(donor.id)}>Delete</button>
+            <br></br><br></br><br></br><br></br><br></br>
+          </div>
+        ))}
+      </div>
+
+      <div className="column">
+        <h2>Available Blood in DB</h2>
+        {bloodDonor.map((donor) => (
+          <div className="donor">
+            <p className="donorInfo">{`ID: ${donor.id}`}&nbsp;</p>
+            <p>{`Name: ${donor.name}`}</p>
+            <p>{`Blood Type: ${donor.bloodType}`}</p>&nbsp;
+          </div>
+        ))}
+      </div>
+      </div>
+
+    <div className="list">
+     <h2 style={{width:500,fontSize:50}}>Available Blood Donors</h2>
+     <table style={{textAlign:'center', width: 500}}>
+     <thead>
+      <tr>
+        <th>Name</th>
+        <th>Blood Type</th>
+        <th>Phone Number</th>
+      </tr>
+     </thead>
+     <tbody>
+      {donorRequest.map((request) =>(
+        <tr className="request">
+          <td>{request.name}</td>
+          <td>{request.bloodType}</td>
+          <td>{request.phone}</td>
+        </tr>))}
+      </tbody>
+   </table>
+ </div></> 
+ );};
 export default AdminDashboard;

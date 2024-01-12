@@ -7,3 +7,13 @@ type BloodDonor @model {
   name: String!
   bloodType: String!
 }
+
+type DonorRequest @model {
+  phone: Int
+  name:String
+  id: ID!
+  age: Int!
+  fever: String!
+  bloodType: String!
+  adminApproval: Boolean 
+}
