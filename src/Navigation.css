@@ -9,7 +9,7 @@ h1{
   
   body{
    
-    background-color: rgba(218, 136, 136, 0.662);
+    background-color: rgba(198, 200, 146, 0.662);
   }
 
   .login-link {
@@ -22,12 +22,9 @@ h1{
     color: #111010;
     font-weight: bold;
     border: 1px solid #c3bbbb;
-    border-radius: 5px;
-    background-color: #ffffff;
-    transition: 0.3s ; /* Add margin to create space between links */
+
+/* Add margin to create space between links */
   }
   
-  .login-link:hover {
-    background-color: #222020;
-  }
+
   
